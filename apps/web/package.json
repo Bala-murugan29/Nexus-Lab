@@ -1,0 +1,41 @@
+{
+  "name": "@nexus-lab/web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@nexus-lab/ui": "*",
+    "@nexus-lab/core": "*",
+    "@monaco-editor/react": "^4.6.0",
+    "framer-motion": "^11.0.3",
+    "zustand": "^4.5.0",
+    "socket.io-client": "^4.6.1",
+    "react-query": "^3.39.3",
+    "react-dropzone": "^14.2.3",
+    "axios": "^1.6.5",
+    "d3": "^7.8.5",
+    "@types/d3": "^7.4.3",
+    "clsx": "^2.1.0",
+    "tailwind-merge": "^2.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "typescript": "^5.3.3",
+    "autoprefixer": "^10.4.17",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "14.1.0"
+  }
+}
