@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:seed": "tsx scripts/seed.ts",
+    "lint": "eslint . --max-warnings 0",
+    "type-check": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions         Session[]
+  knowledgeNodes   KnowledgeNode[]
+  learningGoals    LearningGoal[]
+  productivityData ProductivityData[]
+  projects         Project[]
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  userId        String
+  startTime     DateTime @default(now())
+  endTime       DateTime?
+  focusTime     Int      @default(0) // minutes
+  tasksCompleted Int     @default(0)
+  currentFile   String?
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities    Activity[]
+  
+  @@index([userId])
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  userId      String
+  description String?
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  files       File[]
+  issues      Issue[]
+  
+  @@index([userId])
+}
+
+model File {
+  id           String   @id @default(cuid())
+  projectId    String
+  path         String
+  language     String
+  content      String   @db.Text
+  lines        Int
+  lastModified DateTime @default(now())
+  
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@unique([projectId, path])
+  @@index([projectId])
+}
+
+model KnowledgeNode {
+  id           String   @id @default(cuid())
+  userId       String
+  concept      String
+  category     String
+  masteryLevel Float    @default(0)
+  confidence   Float    @default(0)
+  lastUpdated  DateTime @default(now())
+  
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  evidence     MasteryEvidence[]
+  
+  @@unique([userId, concept])
+  @@index([userId])
+}
+
+model MasteryEvidence {
+  id              String        @id @default(cuid())
+  knowledgeNodeId String
+  type            String
+  strength        Float
+  context         String        @db.Text
+  timestamp       DateTime      @default(now())
+  
+  knowledgeNode   KnowledgeNode @relation(fields: [knowledgeNodeId], references: [id], onDelete: Cascade)
+  
+  @@index([knowledgeNodeId])
+}
+
+model LearningGoal {
+  id            String    @id @default(cuid())
+  userId        String
+  concept       String
+  targetMastery Float
+  progress      Float     @default(0)
+  deadline      DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  sessionId String
+  type      String
+  details   Json
+  timestamp DateTime @default(now())
+  
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  @@index([sessionId])
+}
+
+model Issue {
+  id          String   @id @default(cuid())
+  projectId   String
+  type        String
+  severity    String
+  description String   @db.Text
+  location    Json?
+  status      String   @default("open")
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+  
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@index([projectId])
+}
+
+model Intervention {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  priority  Int
+  content   Json
+  timing    Json
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  executedAt DateTime?
+  
+  @@index([userId, status])
+}
+
+model ReasoningTrace {
+  id            String   @id @default(cuid())
+  decisionId    String
+  userId        String
+  inputContext  Json
+  reasoningSteps Json
+  finalDecision Json
+  confidence    Float
+  executionTime Int      // milliseconds
+  timestamp     DateTime @default(now())
+  
+  @@index([userId])
+  @@index([decisionId])
+}
+
+model ProductivityData {
+  id               String   @id @default(cuid())
+  userId           String
+  sessionId        String
+  date             DateTime @default(now())
+  taskMetrics      Json
+  errorPatterns    Json
+  focusMetrics     Json
+  learningVelocity Json
+  efficiencyScore  Float
+  
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([sessionId])
+  @@index([date])
+}
+
+model LearningContent {
+  id                 String   @id @default(cuid())
+  type               String
+  concept            String
+  duration           Int      // seconds
+  difficulty         String
+  content            Json
+  prerequisites      String[]
+  learningObjectives String[]
+  createdAt          DateTime @default(now())
+  
+  @@index([concept])
+  @@index([type])
+}
