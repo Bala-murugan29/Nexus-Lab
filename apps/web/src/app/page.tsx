@@ -1,6 +1,5 @@
-import { redirect } from 'next/navigation';
+import { Workspace } from '@/components/workspace/Workspace';
 
 export default function HomePage() {
-  // Redirect to login page - users must authenticate first
-  redirect('/login');
+  return <Workspace />;
 }
