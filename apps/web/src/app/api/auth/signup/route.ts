@@ -48,6 +48,13 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Create session in database
+    const session = await prisma.session.create({
+      data: {
+        userId: user.id,
+      },
+    });
+
     // Create a session for the user
     const response = NextResponse.json(
       {
@@ -57,8 +64,8 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
 
-    // Set HTTP-only cookie with user session
-    response.cookies.set('user-session', user.id, {
+    // Set HTTP-only cookie with session ID
+    response.cookies.set('user-session', session.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

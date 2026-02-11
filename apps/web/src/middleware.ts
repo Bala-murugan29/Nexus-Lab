@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
   
   // Redirect to login if accessing protected route without authentication
-  if (!isAuthenticated && !isPublicRoute && pathname !== '/') {
+  if (!isAuthenticated && !isPublicRoute) {
     const loginUrl = new URL('/login', request.url);
     return NextResponse.redirect(loginUrl);
   }
