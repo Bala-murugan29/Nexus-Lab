@@ -12,6 +12,14 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const { isLoading, handleLoginSubmit } = useAuthForm();
 
+  const handleGoogleOAuth = () => {
+    window.location.href = '/api/auth/google';
+  };
+
+  const handleGitHubOAuth = () => {
+    window.location.href = '/api/auth/github';
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* 3D Background with Circuit Fox */}
@@ -290,6 +298,7 @@ export default function LoginPage() {
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-300" />
                   <button
                     type="button"
+                    onClick={handleGoogleOAuth}
                     className="relative flex items-center justify-center px-4 py-3 bg-slate-900/70 backdrop-blur-xl border border-cyan-500/30 rounded-xl text-white hover:bg-slate-800/70 transition-all duration-300"
                   >
                     <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -305,6 +314,7 @@ export default function LoginPage() {
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-300" />
                   <button
                     type="button"
+                    onClick={handleGitHubOAuth}
                     className="relative flex items-center justify-center px-4 py-3 bg-slate-900/70 backdrop-blur-xl border border-purple-500/30 rounded-xl text-white hover:bg-slate-800/70 transition-all duration-300"
                   >
                     <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">

@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
 
     // Handle name - can be either 'name' field or combined 'firstName' and 'lastName'
     const fullName = name || (firstName && lastName ? `${firstName} ${lastName}` : firstName || lastName);
-
+      
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json(
       {
         message: 'User created successfully',
+        redirectUrl: '/login',
         user,
       },
       { status: 201 }

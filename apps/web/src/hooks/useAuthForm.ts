@@ -50,7 +50,7 @@ export const useAuthForm = () => {
                 body: JSON.stringify({ email, password }),
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => ({}));
 
             if (!response.ok) {
                 alert(data.error || 'Login failed. Please try again.');
@@ -59,7 +59,8 @@ export const useAuthForm = () => {
 
             alert('Login successful!');
             onSuccess?.();
-            window.location.href = '/workspace';
+            const redirectUrl = typeof data.redirectUrl === 'string' ? data.redirectUrl : '/workspace';
+            window.location.href = redirectUrl;
         } catch (error) {
             console.error('Login error:', error);
             alert('An error occurred. Please try again.');
@@ -98,7 +99,7 @@ export const useAuthForm = () => {
                 body: JSON.stringify({ firstName, lastName, email, password }),
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => ({}));
 
             if (!response.ok) {
                 alert(data.error || 'Signup failed. Please try again.');
@@ -106,7 +107,8 @@ export const useAuthForm = () => {
             }
 
             alert('Account created successfully! Please log in.');
-            window.location.href = '/login';
+            const redirectUrl = typeof data.redirectUrl === 'string' ? data.redirectUrl : '/login';
+            window.location.href = redirectUrl;
             onSuccess?.();
         } catch (error) {
             console.error('Signup error:', error);

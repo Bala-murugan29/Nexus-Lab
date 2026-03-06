@@ -1,21 +1,54 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useNexusStore } from '@/lib/store';
+import Link from 'next/link';
 
 interface SidebarProps {
   activeProject: string;
   onProjectChange: (project: string) => void;
 }
 
+interface UserData {
+  user: {
+    id: string;
+    email: string;
+    name: string | null;
+  };
+  stats: {
+    totalProjects: number;
+    activeSessions: number;
+  };
+}
+
 export function Sidebar({ activeProject, onProjectChange }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
   const projects = useNexusStore((state) => state.projects);
   const metrics = useNexusStore((state) => state.metrics);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch('/api/user/profile');
+        if (response.ok) {
+          const data = await response.json();
+          setUserData(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const navItems = [
     { icon: '▶', label: 'Workspace', active: true, path: '/' },
@@ -49,10 +82,6 @@ export function Sidebar({ activeProject, onProjectChange }: SidebarProps) {
           <button
             key={index}
             onClick={() => router.push(item.path)}
-            className={cn(
-              'w-full px-4 py-3 flex items-center gap-3 hover:bg-background-tertiary transition-colors',
-              item.active && 'bg-background-tertiary border-l-2 border-primary'
-            )}
             className={cn(
               'w-full px-4 py-3 flex items-center gap-3 hover:bg-background-tertiary transition-colors',
               item.active && 'bg-background-tertiary border-l-2 border-primary'
@@ -130,23 +159,38 @@ export function Sidebar({ activeProject, onProjectChange }: SidebarProps) {
       </div>
 
       {/* User Profile */}
-      <div className="p-4 border-t border-border flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center flex-shrink-0">
-          <span className="text-white font-semibold">DA</span>
-        </div>
-        {!collapsed && (
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-text-primary">Dr. Aris</div>
-            <div className="text-xs text-text-muted">Premium Mode</div>
+      <Link href="/profile">
+        <div className="p-4 border-t border-border flex items-center gap-3 cursor-pointer hover:bg-background-tertiary transition-colors">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent-blue to-accent-purple flex items-center justify-center flex-shrink-0">
+            <span className="text-white font-semibold">
+              {userData?.user.name
+                ?.split(' ')
+                .map((n) => n[0])
+                .join('')
+                .toUpperCase() || userData?.user.email[0].toUpperCase() || '?'}
+            </span>
           </div>
-        )}
-        <button 
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-text-muted hover:text-text-primary transition-colors"
-        >
-          {collapsed ? '→' : '←'}
-        </button>
-      </div>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-text-primary truncate">
+                {userData?.user.name || 'User'}
+              </div>
+              <div className="text-xs text-text-muted truncate">
+                {userData?.stats.activeSessions ? `${userData.stats.activeSessions} active session${userData.stats.activeSessions !== 1 ? 's' : ''}` : 'No active session'}
+              </div>
+            </div>
+          )}
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              setCollapsed(!collapsed);
+            }}
+            className="text-text-muted hover:text-text-primary transition-colors"
+          >
+            {collapsed ? '→' : '←'}
+          </button>
+        </div>
+      </Link>
     </motion.div>
   );
 }

@@ -2,7 +2,6 @@
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Sphere, MeshDistortMaterial, Float, Stars } from '@react-three/drei';
-import { Suspense } from 'react';
 
 function AnimatedSphere({ position, color, scale = 2 }: { position: [number, number, number]; color: string; scale?: number }) {
   return (
@@ -16,7 +15,7 @@ function AnimatedSphere({ position, color, scale = 2 }: { position: [number, num
           roughness={0}
           metalness={0.8}
         />
-      </Sphere>
+      </Sphere> 
     </Float>
   );
 }
@@ -38,7 +37,7 @@ function ParticleField() {
             <meshStandardMaterial 
               color="#60a5fa" 
               emissive="#3b82f6" 
-              emissiveIntensity={0.5}
+              emissiveIntensity={1.0}
               transparent
               opacity={0.6}
             />
@@ -61,33 +60,31 @@ export default function Scene3D() {
         }}
         dpr={[1, 2]}
       >
-        <Suspense fallback={null}>
-          {/* Lighting */}
-          <ambientLight intensity={0.4} />
-          <directionalLight position={[10, 10, 5]} intensity={1.5} color="#ffffff" />
-          <pointLight position={[-10, -10, -5]} intensity={1} color="#3b82f6" />
-          <pointLight position={[10, -10, 5]} intensity={0.5} color="#8b5cf6" />
-          
-          {/* Main 3D Spheres */}
-          <AnimatedSphere position={[-4, 2, -2]} color="#3b82f6" scale={2.5} />
-          <AnimatedSphere position={[4, -2, -3]} color="#8b5cf6" scale={2} />
-          <AnimatedSphere position={[0, 0, -5]} color="#06b6d4" scale={1.8} />
-          
-          {/* Particle Field */}
-          <ParticleField />
-          
-          {/* Camera Controls */}
-          <OrbitControls
-            enableZoom={false}
-            enablePan={false}
-            autoRotate
-            autoRotateSpeed={0.3}
-            maxPolarAngle={Math.PI / 2}
-            minPolarAngle={Math.PI / 2}
-            enableDamping
-            dampingFactor={0.05}
-          />
-        </Suspense>
+        {/* Lighting */}
+        <ambientLight intensity={0.4} />
+        <directionalLight position={[10, 10, 5]} intensity={1.5} color="#ffffff" />
+        <pointLight position={[-10, -10, -5]} intensity={1} color="#3b82f6" />
+        <pointLight position={[10, -10, 5]} intensity={0.5} color="#8b5cf6" />
+        
+        {/* Main 3D Spheres */}
+        <AnimatedSphere position={[-4, 2, -2]} color="#3b82f6" scale={2.5} />
+        <AnimatedSphere position={[4, -2, -3]} color="#8b5cf6" scale={2} />
+        <AnimatedSphere position={[0, 0, -5]} color="#06b6d4" scale={1.8} />
+        
+        {/* Particle Field */}
+        <ParticleField />
+        
+        {/* Camera Controls */}
+        <OrbitControls
+          enableZoom={false}
+          enablePan={false}
+          autoRotate
+          autoRotateSpeed={0.3}
+          maxPolarAngle={Math.PI / 2}
+          minPolarAngle={Math.PI / 2}
+          enableDamping
+          dampingFactor={0.05}
+        />
       </Canvas>
     </div>
   );

@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json(
       {
         message: 'Login successful',
+        redirectUrl: '/workspace',
         user: {
           id: user.id,
           email: user.email,
